@@ -23,6 +23,12 @@ const LoginForm: React.FC<LoginFormProps> = ({
     password: '',
     confirmPassword: '',
     firstName: '',
+    cedula: '',
+    fechaNacimiento: '',
+    telefono: '',
+    direccion: '',
+    rol: 'Representante',
+    genero: 'Hombre',
     verificationCode: '',
     newPassword: '',
     confirmNewPassword: ''
@@ -98,6 +104,26 @@ const LoginForm: React.FC<LoginFormProps> = ({
         if (!formData.firstName.trim()) {
           newErrors.firstName = 'El nombre es requerido';
         }
+        
+        if (!formData.cedula.trim()) {
+          newErrors.cedula = 'La cédula es requerida';
+        } else if (!/^[VE]-?\d{7,8}$/i.test(formData.cedula.replace(/\s/g, ''))) {
+          newErrors.cedula = 'La cédula debe tener el formato V-12345678 o E-12345678';
+        }
+        
+        if (!formData.fechaNacimiento.trim()) {
+          newErrors.fechaNacimiento = 'La fecha de nacimiento es requerida';
+        }
+        
+        if (!formData.telefono.trim()) {
+          newErrors.telefono = 'El teléfono es requerido';
+        } else if (!/^0\d{3}-?\d{7}$/.test(formData.telefono.replace(/\s/g, ''))) {
+          newErrors.telefono = 'El teléfono debe tener el formato 0414-1234567';
+        }
+        
+        if (!formData.direccion.trim()) {
+          newErrors.direccion = 'La dirección es requerida';
+        }
       }
 
       if (!formData.password.trim()) {
@@ -138,6 +164,12 @@ const LoginForm: React.FC<LoginFormProps> = ({
             password: '',
             confirmPassword: '',
             firstName: '',
+            cedula: '',
+            fechaNacimiento: '',
+            telefono: '',
+            direccion: '',
+            rol: 'Representante',
+            genero: 'Hombre',
             verificationCode: '',
             newPassword: '',
             confirmNewPassword: ''
@@ -204,7 +236,7 @@ const LoginForm: React.FC<LoginFormProps> = ({
                   name="firstName"
                   value={formData.firstName}
                   onChange={handleChange}
-                  placeholder="Nombre"
+                  placeholder="Nombre completo"
                   className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 transition-all ${
                     errors.firstName ? 'border-red-500' : 'border-gray-300'
                   }`}
@@ -213,6 +245,124 @@ const LoginForm: React.FC<LoginFormProps> = ({
               {errors.firstName && (
                 <p className="text-red-500 text-sm mt-1">{errors.firstName}</p>
               )}
+            </div>
+          )}
+
+          {/* Cedula field for registration */}
+          {!isLogin && !isForgotPassword && (
+            <div>
+              <div className="relative">
+                <input
+                  type="text"
+                  name="cedula"
+                  value={formData.cedula}
+                  onChange={handleChange}
+                  placeholder="Cédula (V-12345678)"
+                  className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 transition-all ${
+                    errors.cedula ? 'border-red-500' : 'border-gray-300'
+                  }`}
+                />
+              </div>
+              {errors.cedula && (
+                <p className="text-red-500 text-sm mt-1">{errors.cedula}</p>
+              )}
+            </div>
+          )}
+
+          {/* Fecha de nacimiento field for registration */}
+          {!isLogin && !isForgotPassword && (
+            <div>
+              <div className="relative">
+                <input
+                  type="date"
+                  name="fechaNacimiento"
+                  value={formData.fechaNacimiento}
+                  onChange={handleChange}
+                  className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 transition-all ${
+                    errors.fechaNacimiento ? 'border-red-500' : 'border-gray-300'
+                  }`}
+                />
+              </div>
+              {errors.fechaNacimiento && (
+                <p className="text-red-500 text-sm mt-1">{errors.fechaNacimiento}</p>
+              )}
+            </div>
+          )}
+
+          {/* Telefono field for registration */}
+          {!isLogin && !isForgotPassword && (
+            <div>
+              <div className="relative">
+                <input
+                  type="tel"
+                  name="telefono"
+                  value={formData.telefono}
+                  onChange={handleChange}
+                  placeholder="Teléfono (0414-1234567)"
+                  className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 transition-all ${
+                    errors.telefono ? 'border-red-500' : 'border-gray-300'
+                  }`}
+                />
+              </div>
+              {errors.telefono && (
+                <p className="text-red-500 text-sm mt-1">{errors.telefono}</p>
+              )}
+            </div>
+          )}
+
+          {/* Direccion field for registration */}
+          {!isLogin && !isForgotPassword && (
+            <div>
+              <div className="relative">
+                <textarea
+                  name="direccion"
+                  value={formData.direccion}
+                  onChange={handleChange}
+                  placeholder="Dirección completa"
+                  rows={3}
+                  className={`w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 transition-all resize-none ${
+                    errors.direccion ? 'border-red-500' : 'border-gray-300'
+                  }`}
+                />
+              </div>
+              {errors.direccion && (
+                <p className="text-red-500 text-sm mt-1">{errors.direccion}</p>
+              )}
+            </div>
+          )}
+
+          {/* Rol field for registration */}
+          {!isLogin && !isForgotPassword && (
+            <div>
+              <div className="relative">
+                <select
+                  name="rol"
+                  value={formData.rol}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 transition-all bg-white"
+                >
+                  <option value="Representante">Representante</option>
+                  <option value="Docente">Docente</option>
+                  <option value="Admin">Admin</option>
+                </select>
+              </div>
+            </div>
+          )}
+
+          {/* Genero field for registration */}
+          {!isLogin && !isForgotPassword && (
+            <div>
+              <div className="relative">
+                <select
+                  name="genero"
+                  value={formData.genero}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 transition-all bg-white"
+                >
+                  <option value="Hombre">Hombre</option>
+                  <option value="Mujer">Mujer</option>
+                </select>
+              </div>
             </div>
           )}
 
