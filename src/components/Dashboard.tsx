@@ -71,6 +71,7 @@ const Dashboard: React.FC<DashboardProps> = ({
   ]);
 
   const [isAddingUser, setIsAddingUser] = useState(false);
+  const [editingUser, setEditingUser] = useState<number | null>(null);
   const [newUser, setNewUser] = useState({
     nombre: '',
     email: '',
@@ -239,6 +240,13 @@ const Dashboard: React.FC<DashboardProps> = ({
 
   const deleteUser = (userId: number) => {
     setUsuarios(usuarios.filter(user => user.id !== userId));
+  };
+
+  const updateUser = (userId: number, updatedData: any) => {
+    setUsuarios(usuarios.map(user => 
+      user.id === userId ? { ...user, ...updatedData } : user
+    ));
+    setEditingUser(null);
   };
 
   // Funciones para gestión de eventos
@@ -544,17 +552,52 @@ const Dashboard: React.FC<DashboardProps> = ({
                   <tbody>
                     {usuarios.map((usuario) => (
                       <tr key={usuario.id} className="border-b border-gray-100 hover:bg-gray-50">
-                        <td className="py-4 px-6">{usuario.nombre}</td>
-                        <td className="py-4 px-6">{usuario.email}</td>
                         <td className="py-4 px-6">
-                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                            usuario.rol === 'administrador' ? 'bg-purple-100 text-purple-800' :
-                            usuario.rol === 'docente' ? 'bg-blue-100 text-blue-800' :
-                            usuario.rol === 'representante' ? 'bg-green-100 text-green-800' :
-                            'bg-gray-100 text-gray-800'
-                          }`}>
-                            {usuario.rol}
-                          </span>
+                          {editingUser === usuario.id ? (
+                            <input
+                              type="text"
+                              value={usuario.nombre}
+                              onChange={(e) => updateUser(usuario.id, {nombre: e.target.value})}
+                              className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-500"
+                            />
+                          ) : (
+                            usuario.nombre
+                          )}
+                        </td>
+                        <td className="py-4 px-6">
+                          {editingUser === usuario.id ? (
+                            <input
+                              type="email"
+                              value={usuario.email}
+                              onChange={(e) => updateUser(usuario.id, {email: e.target.value})}
+                              className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-500"
+                            />
+                          ) : (
+                            usuario.email
+                          )}
+                        </td>
+                        <td className="py-4 px-6">
+                          {editingUser === usuario.id ? (
+                            <select
+                              value={usuario.rol}
+                              onChange={(e) => updateUser(usuario.id, {rol: e.target.value})}
+                              className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-500"
+                            >
+                              <option value="estudiante">Estudiante</option>
+                              <option value="docente">Docente</option>
+                              <option value="administrador">Administrador</option>
+                              <option value="representante">Representante</option>
+                            </select>
+                          ) : (
+                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                              usuario.rol === 'administrador' ? 'bg-purple-100 text-purple-800' :
+                              usuario.rol === 'docente' ? 'bg-blue-100 text-blue-800' :
+                              usuario.rol === 'representante' ? 'bg-green-100 text-green-800' :
+                              'bg-gray-100 text-gray-800'
+                            }`}>
+                              {usuario.rol}
+                            </span>
+                          )}
                         </td>
                         <td className="py-4 px-6">
                           <span className={`px-2 py-1 rounded-full text-xs font-medium ${
@@ -564,10 +607,38 @@ const Dashboard: React.FC<DashboardProps> = ({
                           </span>
                         </td>
                         <td className="py-4 px-6">
-                          <div className="flex space-x-2">
+                          <div className="flex space-x-1">
+                            {editingUser === usuario.id ? (
+                              <>
+                                <button
+                                  onClick={() => setEditingUser(null)}
+                                  className="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded text-xs transition-colors flex items-center"
+                                >
+                                  <Save className="w-3 h-3 mr-1" />
+                                  Guardar
+                                </button>
+                                <button
+                                  onClick={() => setEditingUser(null)}
+                                  className="bg-gray-500 hover:bg-gray-600 text-white px-2 py-1 rounded text-xs transition-colors flex items-center"
+                                >
+                                  <X className="w-3 h-3 mr-1" />
+                                  Cancelar
+                                </button>
+                              </>
+                            ) : (
+                              <>
+                                <button
+                                  onClick={() => setEditingUser(usuario.id)}
+                                  className="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded text-xs transition-colors flex items-center"
+                                >
+                                  <Edit3 className="w-3 h-3 mr-1" />
+                                  Modificar
+                                </button>
+                              </>
+                            )}
                             <button
                               onClick={() => toggleUserStatus(usuario.id)}
-                              className={`px-3 py-1 rounded text-sm transition-colors ${
+                              className={`px-2 py-1 rounded text-xs transition-colors ${
                                 usuario.activo 
                                   ? 'bg-yellow-500 hover:bg-yellow-600 text-white' 
                                   : 'bg-green-500 hover:bg-green-600 text-white'
@@ -577,7 +648,7 @@ const Dashboard: React.FC<DashboardProps> = ({
                             </button>
                             <button
                               onClick={() => deleteUser(usuario.id)}
-                              className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm transition-colors"
+                              className="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-xs transition-colors"
                             >
                               Eliminar
                             </button>
